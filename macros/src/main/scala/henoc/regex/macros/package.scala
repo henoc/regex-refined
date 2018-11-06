@@ -1,4 +1,4 @@
-package regex
+package henoc.regex.macros
 
 import java.util.regex.Pattern
 
