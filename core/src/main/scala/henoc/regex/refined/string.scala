@@ -1,12 +1,16 @@
 package henoc.regex.refined
 
+import java.util.{HashMap => JHashMap}
 import java.util.regex.Pattern
 
+import eu.timepit.refined._
+import eu.timepit.refined.string.MatchesRegex
 import eu.timepit.refined.api._
 import eu.timepit.refined.api.Validate
 import eu.timepit.refined.generic.Equal
 import shapeless.Nat.{_0, _1}
 import shapeless.Witness
+import Evasion.ops._
 
 object string {
 
@@ -21,9 +25,14 @@ object string {
   final case class Matches[S](s: S)
 
   /**
-    * Predicate that checks if a regex string contains the group named S.
+    * Predicate that checks if a regex string contains the group name S.
     */
   final case class HasGroupName[S](s: S)
+
+  /**
+    * Predicate that checks if a regex string uses the match flag S. (S is `[idmsuxU]+`)
+    */
+  final case class UseMatchFlag[S](s: S)
 
   /**
     * Predicate that checks if a regex string has no capturing groups.
@@ -72,11 +81,21 @@ object string {
   object HasGroupName {
 
     implicit def hasGroupNameValidate[S <: String](implicit groupName: Witness.Aux[S]): Validate.Plain[String, HasGroupName[S]] =
-      Validate.fromPartial(
-        string => compile(string).matcher("").group(groupName.value),
-        "hasGroupName",
+      Validate.fromPredicate(
+        t => compile(t).method[JHashMap[String, Int]]("namedGroups").containsKey(groupName.value),
+        t => s"/$t/.hasGroupName(${groupName.value})",
         HasGroupName(groupName.value)
       )
+  }
+
+  object UseMatchFlag {
+
+    implicit def useMatchFlagValidate[S <: String](implicit flags: Witness.Aux[S]): Validate.Plain[String, UseMatchFlag[S]] = {
+      val flagChars = refineV[MatchesRegex[W.`"[idmsuxU]+"`.T]](flags.value: String) match {
+        case Left(reason) => Validate.alwaysFailed()
+      }
+    }
+
   }
 
   lazy val compile: String => Pattern = memoize(Pattern.compile)

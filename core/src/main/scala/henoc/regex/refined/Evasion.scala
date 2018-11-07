@@ -11,9 +11,15 @@ import scala.util.matching.Regex
   def clazz: Class[T]
 
   def field[U](instance: T, name: String): U = {
-    val field = clazz.getField(name)
+    val field = clazz.getDeclaredField(name)
     field.setAccessible(true)
     field.get(instance).asInstanceOf[U]
+  }
+
+  def method[U](instance: T, name: String): U = {
+    val method = clazz.getDeclaredMethod(name)
+    method.setAccessible(true)
+    method.invoke(instance).asInstanceOf[U]
   }
 }
 
