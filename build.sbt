@@ -1,9 +1,15 @@
-name := "regex-refined"
+ThisBuild / name := "regex-refined"
 
-version := "0.1"
+ThisBuild / version := "0.1"
 
 ThisBuild / scalaVersion := "2.12.7"
-run := (run in Compile in core).evaluated
+
+ThisBuild / libraryDependencies ++= Seq(
+  "org.scalactic" %% "scalactic" % "3.0.5",
+  "org.scalatest" %% "scalatest" % "3.0.5" % "test"
+)
+
+lazy val root = (project in file(".")) dependsOn user
 
 lazy val macros = (project in file("macros")) settings (
   scalacOptions ++= Seq("-language:experimental.macros"),
@@ -12,5 +18,7 @@ lazy val macros = (project in file("macros")) settings (
 
 lazy val core = (project in file("core")) dependsOn macros settings (
   scalacOptions ++= Seq("-language:reflectiveCalls"),
-  libraryDependencies += "eu.timepit" %% "refined" % "0.9.3"
+  libraryDependencies ++= Seq("eu.timepit" %% "refined" % "0.9.3")
 )
+
+lazy val user = (project in file("user")) dependsOn core
