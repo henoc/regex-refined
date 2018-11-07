@@ -9,6 +9,7 @@ ThisBuild / libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "3.0.5" % "test"
 )
 
+
 lazy val root = (project in file(".")) dependsOn user
 
 lazy val macros = (project in file("macros")) settings (
@@ -18,7 +19,11 @@ lazy val macros = (project in file("macros")) settings (
 
 lazy val core = (project in file("core")) dependsOn macros settings (
   scalacOptions ++= Seq("-language:reflectiveCalls"),
-  libraryDependencies ++= Seq("eu.timepit" %% "refined" % "0.9.3")
+  addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full),
+  libraryDependencies ++= Seq(
+    "eu.timepit" %% "refined" % "0.9.3",
+    "com.github.mpilquist" %% "simulacrum" % "0.14.0"
+  )
 )
 
 lazy val user = (project in file("user")) dependsOn core
