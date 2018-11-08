@@ -90,7 +90,7 @@ object string {
 
   object MatchFlags {
 
-    implicit def matchFlagValidate[S <: String](implicit flags: Witness.Aux[S]): Validate.Plain[String, MatchFlags[S]] = {
+    implicit def matchFlagsValidate[S <: String](implicit flags: Witness.Aux[S]): Validate.Plain[String, MatchFlags[S]] = {
       val flagChars = refineV[MatchesRegex[W.`"[idmsuxU]+"`.T]].unsafeFrom(flags.value: String).value
       val flagsInt = compile(s"(?$flagChars)").flags()
       Validate.fromPredicate(
