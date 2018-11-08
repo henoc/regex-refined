@@ -11,8 +11,10 @@ import eu.timepit.refined.generic.Equal
 import shapeless.Nat.{_0, _1}
 import shapeless.Witness
 import Evasion.ops._
+import eu.timepit.refined.boolean.And
+import javax.script.ScriptEngineManager
 
-object string {
+object regex_string {
 
   /**
     * Predicate that checks if the group count of a regex string satisfies P.
@@ -35,6 +37,11 @@ object string {
   final case class MatchFlags[S](s: S)
 
   /**
+    * Predicate that checks if a regex string is valid for JavaScript regex.
+    */
+  final case class JsRegex()
+
+  /**
     * Predicate that checks if a regex string has no capturing groups.
     */
   type NoGroup = GroupCount[Equal[_0]]
@@ -43,6 +50,11 @@ object string {
     * Predicate that checks if a regex string has one capturing groups.
     */
   type OneGroup = GroupCount[Equal[_1]]
+
+  /**
+    * Predicate that checks if a regex string is JavaScript compatible.
+    */
+  type JsRegexCompatible = Regex And JsRegex
 
   object GroupCount {
 
@@ -86,6 +98,7 @@ object string {
         t => s"/$t/.hasGroupName(${groupName.value})",
         HasGroupName(groupName.value)
       )
+
   }
 
   object MatchFlags {
@@ -98,6 +111,15 @@ object string {
         t => s"/$t/.useMatchFlag(${flags.value})",
         MatchFlags(flags.value)
       )
+    }
+
+  }
+
+  object JsRegex {
+
+    implicit def jsRegexValidate: Validate.Plain[String, JsRegex] = {
+      val engine = new ScriptEngineManager().getEngineByName("js")
+      Validate.fromPartial(t => engine.eval(s"/$t/"), "jsRegex", JsRegex())
     }
 
   }

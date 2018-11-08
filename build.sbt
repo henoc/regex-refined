@@ -14,7 +14,10 @@ lazy val root = (project in file(".")) dependsOn user
 
 lazy val macros = (project in file("macros")) settings (
   scalacOptions ++= Seq("-language:experimental.macros"),
-  libraryDependencies += scalaOrganization.value % "scala-reflect" % scalaVersion.value
+  libraryDependencies ++= Seq(
+    scalaOrganization.value % "scala-reflect" % scalaVersion.value,
+    scalaOrganization.value % "scala-compiler" % scalaVersion.value
+  )
 )
 
 lazy val core = (project in file("core")) dependsOn macros settings (
