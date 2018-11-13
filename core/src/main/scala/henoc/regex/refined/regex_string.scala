@@ -72,7 +72,7 @@ object regex_string {
             val r = vint.validate(fn(t)(()))
             Result.fromBoolean(r.isPassed, GroupCount(r))
           } catch {
-            case _: PatternSyntaxException => Failed(null)
+            case _: PatternSyntaxException => Failed(GroupCount(vint.validate(0)))
           }
         }
 
