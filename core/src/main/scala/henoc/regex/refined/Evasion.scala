@@ -1,9 +1,6 @@
 package henoc.regex.refined
-
 import java.util.regex.Pattern
-
 import simulacrum.typeclass
-
 import scala.util.matching.Regex
 
 @typeclass private[refined] trait Evasion[T] {

@@ -8,4 +8,6 @@ package object refined {
     override def apply(key: I): O = getOrElseUpdate(key, f(key))
   }
 
+  final val D = "\"\"\""
+
 }

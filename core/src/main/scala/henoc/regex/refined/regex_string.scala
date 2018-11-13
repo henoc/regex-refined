@@ -1,7 +1,7 @@
 package henoc.regex.refined
 
 import java.util.{Map => JMap}
-import java.util.regex.Pattern
+import java.util.regex.{Pattern, PatternSyntaxException}
 
 import eu.timepit.refined._
 import eu.timepit.refined.string._
@@ -11,8 +11,11 @@ import eu.timepit.refined.generic.Equal
 import shapeless.Nat.{_0, _1}
 import shapeless.Witness
 import Evasion.ops._
+import eu.timepit.refined.api.Validate.Plain
 import eu.timepit.refined.boolean.And
 import javax.script.ScriptEngineManager
+
+import scala.util.Try
 
 object regex_string {
 
@@ -61,19 +64,23 @@ object regex_string {
     implicit def groupCountValidate[Predicate, RP](implicit vint: Validate.Aux[Int, Predicate, RP]):
       Validate.Aux[String, GroupCount[Predicate], GroupCount[vint.Res]] = {
 
-      def helper[T](fn: T => Int) = new Validate[T, GroupCount[Predicate]] {
+      def helper[T](fn: T => Unit => Int) = new Validate[T, GroupCount[Predicate]] {
         override type R = GroupCount[vint.Res]
 
         override def validate(t: T): Res = {
-          val r = vint.validate(fn(t))
-          Result.fromBoolean(r.isPassed, GroupCount(r))
+          try {
+            val r = vint.validate(fn(t)(()))
+            Result.fromBoolean(r.isPassed, GroupCount(r))
+          } catch {
+            case _: PatternSyntaxException => Failed(null)
+          }
         }
 
-        override def showExpr(t: T): String =
-          s"/$t/.groupCount(${vint.showExpr(fn(t))})"
+        override def showExpr(t: T): String = Try(fn(t)(())).fold(e => s"Pattern.compile: ${e.getMessage}", i => s"groupCount(/$t/): ${vint.showExpr(i)}")
+
       }
 
-      helper[String](target => groupCount(compile(target)))
+      helper[String](target => _ => groupCount(compile(target)))
     }
   }
 
@@ -81,9 +88,9 @@ object regex_string {
 
     implicit def matchesValidate[S <: String](implicit text: Witness.Aux[S]):
       Validate.Plain[String, Matches[S]] = {
-      Validate.fromPredicate(
-        t => compile(t).matcher(text.value).matches(),
-        t => s"/$t/.matches(${text.value})",
+      fromPredicateWithRegex(
+        p => p.matcher(text.value).matches(),
+        p => s"/$p/.matches($D${text.value}$D)",
         Matches(text.value)
       )
     }
@@ -93,9 +100,9 @@ object regex_string {
   object HasGroupName {
 
     implicit def hasGroupNameValidate[S <: String](implicit groupName: Witness.Aux[S]): Validate.Plain[String, HasGroupName[S]] =
-      Validate.fromPredicate(
-        t => compile(t).method[JMap[String, Int]]("namedGroups").containsKey(groupName.value),
-        t => s"/$t/.hasGroupName(${groupName.value})",
+      fromPredicateWithRegex(
+        p => p.method[JMap[String, Int]]("namedGroups").containsKey(groupName.value),
+        p => s"/$p/.hasGroupName($D${groupName.value}$D)",
         HasGroupName(groupName.value)
       )
 
@@ -106,9 +113,9 @@ object regex_string {
     implicit def matchFlagsValidate[S <: String](implicit flags: Witness.Aux[S]): Validate.Plain[String, MatchFlags[S]] = {
       val flagChars = refineV[MatchesRegex[W.`"[idmsuxU]+"`.T]].unsafeFrom(flags.value: String).value
       val flagsInt = compile(s"(?$flagChars)").flags()
-      Validate.fromPredicate(
-        t => (compile(t).flags() & flagsInt) == flagsInt,
-        t => s"/$t/.useMatchFlag(${flags.value})",
+      fromPredicateWithRegex(
+        p => (p.flags() & flagsInt) == flagsInt,
+        p => s"/$p/.useMatchFlag($D${flags.value}$D)",
         MatchFlags(flags.value)
       )
     }
@@ -128,6 +135,21 @@ object regex_string {
 
   def groupCount(pattern : Pattern): Int = {
     pattern.matcher("").groupCount()
+  }
+
+  def fromPredicateWithRegex[P](f: Pattern => Boolean, showExpr: Pattern => String, p: P): Plain[String, P] = {
+    val g = showExpr
+    new Validate[String, P] {
+      override type R = P
+      override def validate(t: String): Res = {
+        try {
+          Result.fromBoolean(f(compile(t)), p)
+        } catch {
+          case _: PatternSyntaxException => Failed(p)
+        }
+      }
+      override def showExpr(t: String): String = Try(compile(t)).fold(e => s"Pattern.compile: ${e.getMessage}", g)
+    }
   }
 
 }

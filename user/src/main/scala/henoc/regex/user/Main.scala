@@ -11,7 +11,9 @@ import shapeless.syntax.singleton._
 
 object Main {
   def main(args: Array[String]): Unit = {
-    val regex: String Refined JsRegexCompatible = "abc(?:def)f"
+    val regex: String Refined GroupCount[Equal[W.`3`.T]] = "(a)(b)(c)"
     println(regex)
   }
+
+
 }
