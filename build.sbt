@@ -9,13 +9,24 @@ ThisBuild / libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "3.0.5" % "test"
 )
 
-ThisBuild / scalacOptions ++= Seq("-deprecation", "-feature")
+ThisBuild / scalacOptions ++= Seq(
+  "-deprecation",
+  "-feature"
+)
 
 
-lazy val root = (project in file(".")) dependsOn core
+lazy val root = (project in file(".")) dependsOn core settings (
+  scalacOptions ++= Seq(
+    "-Ymacro-debug-lite"
+  )
+)
 
 lazy val core = (project in file("core")) settings (
-  scalacOptions ++= Seq("-language:reflectiveCalls", "-language:implicitConversions", "-language:experimental.macros"),
+  scalacOptions ++= Seq(
+    "-language:reflectiveCalls",
+    "-language:implicitConversions",
+    "-language:experimental.macros"
+  ),
   addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full),
   libraryDependencies ++= Seq(
     "eu.timepit" %% "refined" % "0.9.3",

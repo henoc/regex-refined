@@ -25,6 +25,6 @@ object Evasion {
     override val clazz: Class[Regex] = classOf[Regex]
   }
   implicit val patternEvasion: Evasion[Pattern] = new Evasion[Pattern] {
-    override def clazz: Class[Pattern] = classOf[Pattern]
+    override val clazz: Class[Pattern] = classOf[Pattern]
   }
 }
