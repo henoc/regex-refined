@@ -99,6 +99,9 @@ object regex_string {
 
   object HasGroupName {
 
+    /**
+      * @note This function depends on the non-public method of [[java.util.regex.Pattern]].
+      */
     implicit def hasGroupNameValidate[S <: String](implicit groupName: Witness.Aux[S]): Validate.Plain[String, HasGroupName[S]] =
       fromPredicateWithRegex(
         p => p.method[JMap[String, Int]]("namedGroups").containsKey(groupName.value),
@@ -131,13 +134,13 @@ object regex_string {
 
   }
 
-  lazy val compile: String => Pattern = memoize(Pattern.compile)
+  private[regex] lazy val compile: String => Pattern = memoize(Pattern.compile)
 
-  def groupCount(pattern : Pattern): Int = {
+  private[regex] def groupCount(pattern : Pattern): Int = {
     pattern.matcher("").groupCount()
   }
 
-  def fromPredicateWithRegex[P](f: Pattern => Boolean, showExpr: Pattern => String, p: P): Plain[String, P] = {
+  private[refined] def fromPredicateWithRegex[P](f: Pattern => Boolean, showExpr: Pattern => String, p: P): Plain[String, P] = {
     val g = showExpr
     new Validate[String, P] {
       override type R = P
