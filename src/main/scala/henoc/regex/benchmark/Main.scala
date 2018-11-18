@@ -14,9 +14,8 @@ import henoc.regex.refined._
 object Main {
 
   def main(args: Array[String]): Unit = {
-    val str = new stringRegex[W.`"(.).(.)"`.T] {}
-    "abc" match {
-      case str(a, c) => println(s"a = $a, c = $c")
+    "2018-11-18" match {
+      case regex"""(\d+$year)-(\d+$month)-(\d+$day)""" => println(s"year = $year, month = $month, day = $day")
       case _ => println("no!")
     }
   }
