@@ -4,9 +4,12 @@
 
 ## build.sbt
 
+TODO
+<!--
 ```sbt
 libraryDependencies += "com.github.Henoc" %% "regex-refined" % "0.1.0"
 ```
+-->
 
 ## Usage
 
