@@ -1,5 +1,7 @@
 ThisBuild / name := "regex-refined"
 
+ThisBuild / organization := "com.github.Henoc"
+
 ThisBuild / version := "0.1.0"
 
 ThisBuild / scalaVersion := "2.12.7"
