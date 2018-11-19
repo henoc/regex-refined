@@ -1,8 +1,10 @@
 ThisBuild / name := "regex-refined"
 
-ThisBuild / version := "0.1"
+ThisBuild / version := "0.1.0"
 
 ThisBuild / scalaVersion := "2.12.7"
+
+ThisBuild / crossScalaVersions := Seq("2.11.12", "2.12.7")
 
 ThisBuild / libraryDependencies ++= Seq(
   "org.scalactic" %% "scalactic" % "3.0.5",
@@ -11,22 +13,17 @@ ThisBuild / libraryDependencies ++= Seq(
 
 ThisBuild / scalacOptions ++= Seq(
   "-deprecation",
-  "-feature"
+  "-language:_"
 )
 
 
 lazy val root = (project in file(".")) dependsOn core settings (
   scalacOptions ++= Seq(
-    "-Ymacro-debug-lite"
+    // "-Ymacro-debug-lite"
   )
 )
 
 lazy val core = (project in file("core")) settings (
-  scalacOptions ++= Seq(
-    "-language:reflectiveCalls",
-    "-language:implicitConversions",
-    "-language:experimental.macros"
-  ),
   addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full),
   libraryDependencies ++= Seq(
     "eu.timepit" %% "refined" % "0.9.3",

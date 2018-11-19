@@ -10,18 +10,18 @@ package object macros {
       * Provide a regex string interpolator for pattern matching.
       * {{{
       *   "2018-11-18" match {
-      *     case regex"""(\d+$year)-(\d+$month)-(\d+$day)""" => println(s"year = $year, month = $month, day = $day")
+      *     case r"""(\d+$year)-(\d+$month)-(\d+$day)""" => println(s"year = $year, month = $month, day = $day")
       *     case _ => println("no!")
       *   }
       * }}}
       *
       * The variable positions of interpolator is not concerned, so you can also write:
       * {{{
-      *   regex"""(\d+)-(\d+)-(\d+)$year$month$day"""
-      *   regex"""(?x)   (\d+)-(\d+)-(\d+)    # $year, $month, $day"""
+      *   r"""(\d+)-(\d+)-(\d+)$year$month$day"""
+      *   r"""(?x)   (\d+)-(\d+)-(\d+)    # $year, $month, $day"""
       * }}}
       */
-    def regex: RegexContextExtractor = new RegexContextExtractor(sc)
+    def r: RegexContextExtractor = new RegexContextExtractor(sc)
   }
 
   class RegexContextExtractor(sc: StringContext) {

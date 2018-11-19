@@ -15,7 +15,7 @@ import eu.timepit.refined.api.Validate.Plain
 import eu.timepit.refined.boolean.And
 import javax.script.ScriptEngineManager
 
-import scala.util.Try
+import scala.util.{Failure, Success, Try}
 
 object regex_string {
 
@@ -76,7 +76,10 @@ object regex_string {
           }
         }
 
-        override def showExpr(t: T): String = Try(fn(t)(())).fold(e => s"Pattern.compile: ${e.getMessage}", i => s"groupCount(/$t/): ${vint.showExpr(i)}")
+        override def showExpr(t: T): String = Try(fn(t)(())) match {
+          case Success(i) => s"groupCount(/$t/): ${vint.showExpr(i)}"
+          case Failure(e) => s"Pattern.compile: ${e.getMessage}"
+        }
 
       }
 
@@ -151,7 +154,10 @@ object regex_string {
           case _: PatternSyntaxException => Failed(p)
         }
       }
-      override def showExpr(t: String): String = Try(compile(t)).fold(e => s"Pattern.compile: ${e.getMessage}", g)
+      override def showExpr(t: String): String = Try(compile(t)) match {
+        case Success(ptn) => g(ptn)
+        case Failure(e) => s"Pattern.compile: ${e.getMessage}"
+      }
     }
   }
 
