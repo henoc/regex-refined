@@ -1,8 +1,8 @@
-ThisBuild / name := "regex-refined"
+name := "regex-refined"
 
-ThisBuild / organization := "com.github.Henoc"
+organization := "com.github.henoc"
 
-ThisBuild / version := "0.1.0"
+version := "0.1.0"
 
 ThisBuild / scalaVersion := "2.12.7"
 
@@ -30,5 +30,34 @@ lazy val core = (project in file("core")) settings (
   libraryDependencies ++= Seq(
     "eu.timepit" %% "refined" % "0.9.3",
     "com.github.mpilquist" %% "simulacrum" % "0.14.0"
+  )
+)
+
+licenses := Seq("Apache 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
+
+homepage := Some(url("https://github.com/Henoc/regex-refined"))
+
+publishMavenStyle := true
+Test / publishArtifact := false
+publishTo := Some(
+  if (isSnapshot.value)
+    Opts.resolver.sonatypeSnapshots
+  else
+    Opts.resolver.sonatypeStaging
+)
+
+scmInfo := Some(
+  ScmInfo(
+    url("https://github.com/Henoc/regex-refined"),
+    "scm:git@github.com:Henoc/regex-refined.git"
+  )
+)
+
+developers := List(
+  Developer(
+    id    = "henoc",
+    name  = "henoc",
+    email = "agekutar@gmail.com",
+    url   = url("https://twitter.com/henoc_on_demand")
   )
 )
