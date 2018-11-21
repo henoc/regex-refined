@@ -2,7 +2,7 @@ name := "regex-refined"
 
 organization := "com.github.henoc"
 
-version := "0.1.0"
+version := "0.1.0-SNAPSHOT"
 
 ThisBuild / scalaVersion := "2.12.7"
 
