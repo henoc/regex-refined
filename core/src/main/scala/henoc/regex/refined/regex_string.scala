@@ -1,8 +1,5 @@
 package henoc.regex.refined
 
-import java.util.{Map => JMap}
-import java.util.regex.{Pattern, PatternSyntaxException}
-
 import eu.timepit.refined._
 import eu.timepit.refined.string._
 import eu.timepit.refined.api._
@@ -10,9 +7,9 @@ import eu.timepit.refined.api.Validate
 import eu.timepit.refined.generic.Equal
 import shapeless.Nat.{_0, _1}
 import shapeless.Witness
-import Evasion.ops._
 import eu.timepit.refined.api.Validate.Plain
 import eu.timepit.refined.boolean.And
+import henoc.regex.refined.stdlib.{Pattern, PatternSyntaxException}
 import javax.script.ScriptEngineManager
 
 import scala.util.{Failure, Success, Try}
@@ -107,7 +104,7 @@ object regex_string {
       */
     implicit def hasGroupNameValidate[S <: String](implicit groupName: Witness.Aux[S]): Validate.Plain[String, HasGroupName[S]] =
       fromPredicateWithRegex(
-        p => p.method[JMap[String, Int]]("namedGroups").containsKey(groupName.value),
+        p => p.namedGroups.containsKey(groupName.value),
         p => s"/$p/.hasGroupName($D${groupName.value}$D)",
         HasGroupName(groupName.value)
       )
