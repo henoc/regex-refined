@@ -23,7 +23,7 @@
  * questions.
  */
 
-package henoc.regex.refined.stdlib;
+package henoc.regex.stdlib;
 
 import java.util.HashMap;
 import java.util.Locale;

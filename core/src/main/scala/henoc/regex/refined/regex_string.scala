@@ -9,7 +9,7 @@ import shapeless.Nat.{_0, _1}
 import shapeless.Witness
 import eu.timepit.refined.api.Validate.Plain
 import eu.timepit.refined.boolean.And
-import henoc.regex.refined.stdlib.{Pattern, PatternSyntaxException}
+import henoc.regex.stdlib.{Pattern, PatternSyntaxException}
 import javax.script.ScriptEngineManager
 
 import scala.util.{Failure, Success, Try}

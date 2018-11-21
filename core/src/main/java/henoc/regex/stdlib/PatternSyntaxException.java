@@ -23,9 +23,7 @@
  * questions.
  */
 
-package henoc.regex.refined.stdlib;
-
-import sun.security.action.GetPropertyAction;
+package henoc.regex.stdlib;
 
 
 /**
@@ -95,7 +93,7 @@ public class PatternSyntaxException
 
     private static final String nl =
         java.security.AccessController
-            .doPrivileged(new GetPropertyAction("line.separator"));
+            .doPrivileged(Invoker.newGetPropertyAction("line.separator"));
 
     /**
      * Returns a multi-line string containing the description of the syntax

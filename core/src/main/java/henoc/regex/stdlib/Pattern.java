@@ -23,7 +23,9 @@
  * questions.
  */
 
-package henoc.regex.refined.stdlib;
+package henoc.regex.stdlib;
+
+import henoc.regex.stdlib.Invoker;
 
 import java.text.Normalizer;
 import java.util.Locale;
@@ -1555,7 +1557,7 @@ loop:   for(int x=0, offset=0; x<nCodePoints; x++, offset+=len) {
     }
 
     private int getClass(int c) {
-        return sun.text.Normalizer.getCombiningClass(c);
+        return Invoker.getCombiningClass(c);
     }
 
     /**

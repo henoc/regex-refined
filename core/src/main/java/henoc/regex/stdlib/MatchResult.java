@@ -23,7 +23,7 @@
  * questions.
  */
 
-package henoc.regex.refined.stdlib;
+package henoc.regex.stdlib;
 
 /**
  * The result of a match operation.
