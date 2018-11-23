@@ -1,5 +1,8 @@
 # regex-refined
 
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.henoc/regex-refined_2.12.svg)](http://mvnrepository.com/artifact/com.github.henoc/regex-refined_2.12)
+[![License](https://img.shields.io/badge/license-GPL%2BCE-blue.svg)](https://openjdk.java.net/legal/gplv2+ce.html)
+
 [refined](https://github.com/fthomas/refined) for regex string, and some type-safe regex utilities.
 
 ## build.sbt
