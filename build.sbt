@@ -32,7 +32,7 @@ lazy val core = (project in file("core")) settings (
   )
 )
 
-// licenses := Seq("GPL+CE" -> url(???))
+licenses := Seq("gplv2+ce" -> url("https://openjdk.java.net/legal/gplv2+ce.html"))
 
 homepage := Some(url("https://github.com/Henoc/regex-refined"))
 
