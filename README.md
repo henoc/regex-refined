@@ -4,12 +4,9 @@
 
 ## build.sbt
 
-TODO
-<!--
 ```sbt
-libraryDependencies += "com.github.Henoc" %% "regex-refined" % "0.1.0"
+libraryDependencies += "com.github.henoc" %% "regex-refined" % "0.1.0"
 ```
--->
 
 ## Usage
 
@@ -18,19 +15,23 @@ libraryDependencies += "com.github.Henoc" %% "regex-refined" % "0.1.0"
 There are more examples in test files.
 
 ```scala
+import regex_string._
+import eu.timepit.refined.api._
+import eu.timepit.refined.W
+import eu.timepit.refined.generic.Equal
+import eu.timepit.refined.auto._
+
 // Regex string should have one caputuring-group
 val _: String Refined GroupCount[Equal[W.`1`.T]] = "a(b)c"
 
 // Regex string should have a group name "integer"
-val _: String Refined HasGroupName[W.`"integer"`.T] =
-    "[+-]?((?<integer>[0-9]*)[.])?[0-9]+"
+val _: String Refined HasGroupName[W.`"integer"`.T] = "[+-]?((?<integer>[0-9]*)[.])?[0-9]+"
 
 // Regex string should be full match pattern
 val _: String Refined FullMatchPattern = "^abc$"
 
 // Regex string should be correct as js-regex
-val _: String Refined JsRegex =
-    """abx[\b]cde"""
+val _: String Refined JsRegex = """abx[\b]cde"""
 ```
 
 ### Pattern matching
