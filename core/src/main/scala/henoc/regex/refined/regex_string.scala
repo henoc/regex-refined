@@ -39,6 +39,11 @@ object regex_string {
   final case class MatchFlags[S](s: S)
 
   /**
+    * Predicate that checks if a regex string is the full match pattern: ```^pattern$```.
+    */
+  final case class FullMatchPattern()
+
+  /**
     * Predicate that checks if a regex string is valid for JavaScript regex.
     */
   final case class JsRegex()
@@ -121,6 +126,13 @@ object regex_string {
         MatchFlags(flags.value)
       )
     }
+
+  }
+
+  object FullMatchPattern {
+
+    implicit def fullMatchPatternValidate: Validate.Plain[String, FullMatchPattern] =
+      fromPredicateWithRegex(_.isFullMatchPattern, p => s"/$p/.isFullMatchPattern", FullMatchPattern())
 
   }
 
