@@ -6,7 +6,7 @@ import sun.text.Normalizer
 /**
   * Invoke internal libraries from scala to suppress warnings.
   */
-private[stdlib] object Invoker {
+private[stdlib] object InvokeInternals {
   def getCombiningClass(c: Int): Int = Normalizer.getCombiningClass(c)
   def newGetPropertyAction(s: String) = new GetPropertyAction(s)
 }
