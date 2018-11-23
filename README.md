@@ -19,14 +19,17 @@ There are more examples in test files.
 
 ```scala
 // Regex string should have one caputuring-group
-val a: String Refined GroupCount[Equal[W.`1`.T]] = "a(b)c"
+val _: String Refined GroupCount[Equal[W.`1`.T]] = "a(b)c"
 
 // Regex string should have a group name "integer"
-val b: String Refined HasGroupName[W.`"integer"`.T] =
+val _: String Refined HasGroupName[W.`"integer"`.T] =
     "[+-]?((?<integer>[0-9]*)[.])?[0-9]+"
 
+// Regex string should be full match pattern
+val _: String Refined FullMatchPattern = "^abc$"
+
 // Regex string should be correct as js-regex
-val c: String Refined JsRegex =
+val _: String Refined JsRegex =
     """abx[\b]cde"""
 ```
 

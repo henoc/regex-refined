@@ -1,6 +1,10 @@
 package henoc.regex
 
-import henoc.regex.refined.regex_string._
+import java.util.regex.PatternSyntaxException
+
+import henoc.regex.stdlib.PatternExtra
+
+import scala.util.Try
 import scala.reflect.macros.whitebox
 
 package object macros {
@@ -31,13 +35,15 @@ package object macros {
   private[macros] object MacroImpls {
 
     def provideExtractorImitator(c: whitebox.Context)(s: c.Tree): c.Tree = {
-      import c.universe._
+      import c.universe.{Try => _, _}
 
       val regex = c.prefix.tree match {
         case Select(Apply(_, List(Apply(_, rawParts))), _) => rawParts.map{ case q"${const: String}" => const }.mkString
         case _ => c.abort(c.enclosingPosition, s"Invalid use of regex string extractor")
       }
-      val count = groupCount(compile(regex))
+      val count = Try(PatternExtra.compile(regex).groupCount()).recover {
+        case e: PatternSyntaxException => c.abort(c.enclosingPosition, e.getMessage)
+      }.get
       val imitationMethods = (1 to count)
         .map(i => q"def ${TermName("_" + i)} = matched.get(${Literal(Constant(i - 1))})")
         .toList

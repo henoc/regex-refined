@@ -72,4 +72,16 @@ class RegexStringTest extends FunSuite {
       """val a: String Refined JsRegex = "a++bc" """
     )
   }
+
+  test("FullMatchPattern should work") {
+    assertCompiles(
+      """val a: String Refined FullMatchPattern = "^abc$" """
+    )
+    assertDoesNotCompile(
+      """val a: String Refined FullMatchPattern = "^abc" """
+    )
+    assertDoesNotCompile(
+      """val a: String Refined FullMatchPattern = "abc$" """
+    )
+  }
 }

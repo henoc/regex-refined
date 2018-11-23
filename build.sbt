@@ -18,7 +18,6 @@ ThisBuild / scalacOptions ++= Seq(
   "-language:_"
 )
 
-
 lazy val root = (project in file(".")) dependsOn core settings (
   scalacOptions ++= Seq(
     // "-Ymacro-debug-lite"
@@ -33,7 +32,7 @@ lazy val core = (project in file("core")) settings (
   )
 )
 
-licenses := Seq("Apache 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
+licenses := Seq("gplv2+ce" -> url("https://openjdk.java.net/legal/gplv2+ce.html"))
 
 homepage := Some(url("https://github.com/Henoc/regex-refined"))
 

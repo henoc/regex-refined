@@ -1,7 +1,6 @@
 package henoc.regex.refined
 
-import java.util.{Map => JMap}
-import java.util.regex.{Pattern, PatternSyntaxException}
+import java.util.regex.PatternSyntaxException
 
 import eu.timepit.refined._
 import eu.timepit.refined.string._
@@ -10,9 +9,9 @@ import eu.timepit.refined.api.Validate
 import eu.timepit.refined.generic.Equal
 import shapeless.Nat.{_0, _1}
 import shapeless.Witness
-import Evasion.ops._
 import eu.timepit.refined.api.Validate.Plain
 import eu.timepit.refined.boolean.And
+import henoc.regex.stdlib.PatternExtra
 import javax.script.ScriptEngineManager
 
 import scala.util.{Failure, Success, Try}
@@ -38,6 +37,11 @@ object regex_string {
     * Predicate that checks if a regex string uses the match flags S. (S is `[idmsuxU]+`)
     */
   final case class MatchFlags[S](s: S)
+
+  /**
+    * Predicate that checks if a regex string is the full match pattern: ```^pattern$```.
+    */
+  final case class FullMatchPattern()
 
   /**
     * Predicate that checks if a regex string is valid for JavaScript regex.
@@ -83,7 +87,7 @@ object regex_string {
 
       }
 
-      helper[String](target => _ => groupCount(compile(target)))
+      helper[String](target => _ => PatternExtra.compile(target).groupCount())
     }
   }
 
@@ -92,7 +96,7 @@ object regex_string {
     implicit def matchesValidate[S <: String](implicit text: Witness.Aux[S]):
       Validate.Plain[String, Matches[S]] = {
       fromPredicateWithRegex(
-        p => p.matcher(text.value).matches(),
+        p => p.matches(text.value),
         p => s"/$p/.matches($D${text.value}$D)",
         Matches(text.value)
       )
@@ -102,12 +106,9 @@ object regex_string {
 
   object HasGroupName {
 
-    /**
-      * @note This function depends on the non-public method of [[java.util.regex.Pattern]].
-      */
     implicit def hasGroupNameValidate[S <: String](implicit groupName: Witness.Aux[S]): Validate.Plain[String, HasGroupName[S]] =
       fromPredicateWithRegex(
-        p => p.method[JMap[String, Int]]("namedGroups").containsKey(groupName.value),
+        p => p.namedGroups().containsKey(groupName.value),
         p => s"/$p/.hasGroupName($D${groupName.value}$D)",
         HasGroupName(groupName.value)
       )
@@ -118,13 +119,20 @@ object regex_string {
 
     implicit def matchFlagsValidate[S <: String](implicit flags: Witness.Aux[S]): Validate.Plain[String, MatchFlags[S]] = {
       val flagChars = refineV[MatchesRegex[W.`"[idmsuxU]+"`.T]].unsafeFrom(flags.value: String).value
-      val flagsInt = compile(s"(?$flagChars)").flags()
+      val flagsInt = PatternExtra.compile(s"(?$flagChars)").flags()
       fromPredicateWithRegex(
         p => (p.flags() & flagsInt) == flagsInt,
         p => s"/$p/.useMatchFlag($D${flags.value}$D)",
         MatchFlags(flags.value)
       )
     }
+
+  }
+
+  object FullMatchPattern {
+
+    implicit def fullMatchPatternValidate: Validate.Plain[String, FullMatchPattern] =
+      fromPredicateWithRegex(_.isFullMatchPattern, p => s"/$p/.isFullMatchPattern", FullMatchPattern())
 
   }
 
@@ -137,24 +145,18 @@ object regex_string {
 
   }
 
-  private[regex] lazy val compile: String => Pattern = memoize(Pattern.compile)
-
-  private[regex] def groupCount(pattern : Pattern): Int = {
-    pattern.matcher("").groupCount()
-  }
-
-  private[refined] def fromPredicateWithRegex[P](f: Pattern => Boolean, showExpr: Pattern => String, p: P): Plain[String, P] = {
+  private[refined] def fromPredicateWithRegex[P](f: PatternExtra => Boolean, showExpr: PatternExtra => String, p: P): Plain[String, P] = {
     val g = showExpr
     new Validate[String, P] {
       override type R = P
       override def validate(t: String): Res = {
         try {
-          Result.fromBoolean(f(compile(t)), p)
+          Result.fromBoolean(f(PatternExtra.compile(t)), p)
         } catch {
           case _: PatternSyntaxException => Failed(p)
         }
       }
-      override def showExpr(t: String): String = Try(compile(t)) match {
+      override def showExpr(t: String): String = Try(PatternExtra.compile(t)) match {
         case Success(ptn) => g(ptn)
         case Failure(e) => s"Pattern.compile: ${e.getMessage}"
       }
