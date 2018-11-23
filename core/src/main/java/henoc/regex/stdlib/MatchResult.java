@@ -37,7 +37,7 @@ package henoc.regex.stdlib;
  * @see Matcher
  * @since 1.5
  */
-public interface MatchResult {
+interface MatchResult {
 
     /**
      * Returns the start index of the match.

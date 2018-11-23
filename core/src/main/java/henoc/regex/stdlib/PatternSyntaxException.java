@@ -35,7 +35,7 @@ package henoc.regex.stdlib;
  * @spec JSR-51
  */
 
-public class PatternSyntaxException
+class PatternSyntaxException
     extends IllegalArgumentException
 {
     private static final long serialVersionUID = -3864639126226059218L;
@@ -93,7 +93,7 @@ public class PatternSyntaxException
 
     private static final String nl =
         java.security.AccessController
-            .doPrivileged(Invoker.newGetPropertyAction("line.separator"));
+            .doPrivileged(InvokeInternalLibraries.newGetPropertyAction("line.separator"));
 
     /**
      * Returns a multi-line string containing the description of the syntax

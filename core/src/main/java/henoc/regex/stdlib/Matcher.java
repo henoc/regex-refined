@@ -102,7 +102,7 @@ import java.util.Objects;
  * @spec        JSR-51
  */
 
-public final class Matcher implements MatchResult {
+final class Matcher implements MatchResult {
 
     /**
      * The Pattern object that created this Matcher.

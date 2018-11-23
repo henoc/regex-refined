@@ -25,8 +25,6 @@
 
 package henoc.regex.stdlib;
 
-import henoc.regex.stdlib.Invoker;
-
 import java.text.Normalizer;
 import java.util.Locale;
 import java.util.Iterator;
@@ -768,7 +766,7 @@ import java.util.stream.StreamSupport;
  * @spec        JSR-51
  */
 
-public final class Pattern
+final class Pattern
     implements java.io.Serializable
 {
 
@@ -1557,7 +1555,7 @@ loop:   for(int x=0, offset=0; x<nCodePoints; x++, offset+=len) {
     }
 
     private int getClass(int c) {
-        return Invoker.getCombiningClass(c);
+        return InvokeInternalLibraries.getCombiningClass(c);
     }
 
     /**
@@ -1726,7 +1724,7 @@ loop:   for(int x=0, offset=0; x<nCodePoints; x++, offset+=len) {
         compiled = true;
     }
 
-    public Map<String, Integer> namedGroups() {
+    Map<String, Integer> namedGroups() {
         if (namedGroups == null)
             namedGroups = new HashMap<>(2);
         return namedGroups;
